@@ -4,17 +4,24 @@ namespace EasyDictionary;
 
 interface DictionaryInterface extends \IteratorAggregate
 {
-    const TYPE_SIMPLE = 'simple';
-
     /**
      * @return string
      */
     public function getName():string;
 
     /**
-     * @return mixed
+     * @param DataProviderInterface $provider
      */
-    public function getItems();
-
     public function setDataProvider(DataProviderInterface $provider);
+
+    /**
+     * @return DataProviderInterface
+     */
+    public function getDataProvider():DataProviderInterface;
+
+    /**
+     * @param callable $callback
+     * @return \Generator
+     */
+    public function withView(callable $callback = null);
 }

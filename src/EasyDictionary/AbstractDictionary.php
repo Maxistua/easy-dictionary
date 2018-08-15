@@ -2,10 +2,15 @@
 
 namespace EasyDictionary;
 
-use Psr\SimpleCache\CacheInterface;
-
 abstract class AbstractDictionary implements DictionaryInterface
 {
+    protected $fieldMap = [];
+
+    public function __construct(string $name = '')
+    {
+        $this->setName($name);
+    }
+
     /**
      * Dictionary name
      *
@@ -17,22 +22,6 @@ abstract class AbstractDictionary implements DictionaryInterface
      * @var DataProviderInterface
      */
     protected $dataProvider = null;
-
-
-    /**
-     * @var bool
-     */
-    protected $enableCache = false;
-
-    /**
-     * @var bool
-     */
-    protected $storeInMemory = false;
-
-    /**
-     * @var CacheInterface null
-     */
-    protected $cache = null;
 
     /**
      * @param string $name
@@ -54,24 +43,9 @@ abstract class AbstractDictionary implements DictionaryInterface
     }
 
     /**
-     * @param CacheInterface $cache
-     * @return AbstractDictionary
+     * @param DataProviderInterface $provider
+     * @return $this
      */
-    public function setCache(CacheInterface $cache):self
-    {
-        $this->cache = $cache;
-
-        return $this;
-    }
-
-    /**
-     * @return CacheInterface
-     */
-    public function getCache():CacheInterface
-    {
-        return $this->cache;
-    }
-
     public function setDataProvider(DataProviderInterface $provider)
     {
         $this->dataProvider = $provider;
@@ -79,8 +53,33 @@ abstract class AbstractDictionary implements DictionaryInterface
         return $this;
     }
 
-    public function getDataProvider():DataProviderInterface
+    /**
+     * @return DataProviderInterface
+     */
+    public function getDataProvider(): DataProviderInterface
     {
         return $this->dataProvider;
+    }
+
+    /**
+     * @return \Iterator
+     */
+    abstract public function getIterator();
+
+    /**
+     * @param callable $callback
+     * @return \Generator
+     */
+    public function withView(callable $callback = null)
+    {
+        $iterator = $this->getIterator();
+
+        if (is_callable($callback)) {
+            foreach ($iterator as $key => $value) {
+                yield from $callback($value, $key, $iterator);
+            }
+        } else {
+            yield from $iterator;
+        }
     }
 }

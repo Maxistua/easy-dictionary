@@ -14,17 +14,12 @@ class Simple extends AbstractDictionary
         }
     }
 
-    public function getItems()
-    {
-        $this->populateData();
-
-        return $this->data;
-    }
-
     public function getIterator()
     {
         $this->populateData();
 
-        return new \ArrayIterator($this->data);
+        foreach ($this->data as $key => $item) {
+            yield $key => $item;
+        }
     }
 }

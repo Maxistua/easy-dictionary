@@ -10,7 +10,7 @@ class FromArray implements DataProviderInterface
 
     public function __construct($data = [])
     {
-        $this->setData($data);
+        $this->setData($data['items'] ?? []);
     }
 
     public function setData($data = [])
