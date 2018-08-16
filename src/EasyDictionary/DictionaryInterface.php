@@ -2,7 +2,7 @@
 
 namespace EasyDictionary;
 
-interface DictionaryInterface extends \IteratorAggregate
+interface DictionaryInterface extends \IteratorAggregate, \Countable
 {
     /**
      * @return string
@@ -13,6 +13,11 @@ interface DictionaryInterface extends \IteratorAggregate
      * @param DataProviderInterface $provider
      */
     public function setDataProvider(DataProviderInterface $provider);
+
+    /**
+     * @param callable $view
+     */
+    public function setDefaultView(callable $view = null);
 
     /**
      * @return DataProviderInterface

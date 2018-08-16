@@ -4,16 +4,7 @@ namespace EasyDictionary;
 
 abstract class AbstractDictionary implements DictionaryInterface
 {
-    protected $fieldMap = [];
-
-    public function __construct(string $name = '')
-    {
-        $this->setName($name);
-    }
-
     /**
-     * Dictionary name
-     *
      * @var string
      */
     protected $name = '';
@@ -22,6 +13,27 @@ abstract class AbstractDictionary implements DictionaryInterface
      * @var DataProviderInterface
      */
     protected $dataProvider = null;
+
+    /**
+     * @var callable
+     */
+    public $view = null;
+
+    public function __construct(string $name = '')
+    {
+        $this->setName($name);
+    }
+
+    /**
+     * @param callable|null $view
+     * @return $this
+     */
+    public function setDefaultView(callable $view = null)
+    {
+        $this->view = $view;
+
+        return $this;
+    }
 
     /**
      * @param string $name
@@ -61,10 +73,34 @@ abstract class AbstractDictionary implements DictionaryInterface
         return $this->dataProvider;
     }
 
+    abstract protected function loadData();
+
+    public function getData()
+    {
+
+    }
+
     /**
      * @return \Iterator
      */
-    abstract public function getIterator();
+    public function getIterator()
+    {
+        if (is_null($this->view)) {
+            foreach ($this->getData() as $key => $item) {
+                yield $key => $item;
+            }
+        } else {
+            yield from $this->withView($this->view);
+        }
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->getData());
+    }
 
     /**
      * @param callable $callback
@@ -72,14 +108,10 @@ abstract class AbstractDictionary implements DictionaryInterface
      */
     public function withView(callable $callback = null)
     {
-        $iterator = $this->getIterator();
-
         if (is_callable($callback)) {
-            foreach ($iterator as $key => $value) {
-                yield from $callback($value, $key, $iterator);
-            }
+            yield from call_user_func_array($callback, $this->getData());
         } else {
-            yield from $iterator;
+            yield from $this->getIterator();
         }
     }
 }

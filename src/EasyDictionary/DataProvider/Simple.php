@@ -4,7 +4,11 @@ namespace EasyDictionary\DataProvider;
 
 use EasyDictionary\DataProviderInterface;
 
-class FromArray implements DataProviderInterface
+/**
+ * Class Simple
+ * @package EasyDictionary\DataProvider
+ */
+class Simple implements DataProviderInterface
 {
     protected $data = [];
 

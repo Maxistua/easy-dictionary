@@ -2,7 +2,7 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$repository = new EasyDictionary\Repository();
+$repository = new EasyDictionary\Manager();
 
 $formatDictionary = $repository->get('country');
 
