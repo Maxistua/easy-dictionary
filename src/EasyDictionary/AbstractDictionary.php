@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace EasyDictionary;
 
 use Psr\SimpleCache\CacheInterface;
@@ -24,6 +26,11 @@ abstract class AbstractDictionary implements DictionaryInterface
      * @var callable
      */
     protected $view = null;
+
+    /**
+     * @var callable
+     */
+    protected $searchView = null;
 
     /**
      * @var \Psr\SimpleCache\CacheInterface
@@ -66,6 +73,17 @@ abstract class AbstractDictionary implements DictionaryInterface
     }
 
     /**
+     * @param callable|null $view
+     * @return $this
+     */
+    public function setDefaultSearchView(callable $view = null)
+    {
+        $this->searchView = $view;
+
+        return $this;
+    }
+
+    /**
      * @return DataProviderInterface
      */
     public function getDataProvider(): DataProviderInterface
@@ -87,21 +105,39 @@ abstract class AbstractDictionary implements DictionaryInterface
     /**
      * @return \Iterator
      */
-    public function getIterator()
+    public function getIterator():iterable
     {
-        if (is_null($this->view)) {
+        $view = $this->getDefaultView();
+
+        if (is_null($view)) {
             foreach ($this->getData() as $key => $item) {
                 yield $key => $item;
             }
         } else {
-            yield from $this->withView($this->view);
+            yield from $this->withView($view);
         }
+    }
+
+    /**
+     * @return callable|null
+     */
+    public function getDefaultView():?callable
+    {
+        return $this->view;
+    }
+
+    /**
+     * @return callable|null
+     */
+    public function getDefaultSearchView():?callable
+    {
+        return $this->searchView;
     }
 
     /**
      * @return mixed
      */
-    public function getData()
+    public function getData():iterable
     {
         if (false === $this->dataLoaded) {
             $cache = $this->getCache();
@@ -109,7 +145,7 @@ abstract class AbstractDictionary implements DictionaryInterface
             if (is_null($cache)) {
                 $this->data = $this->loadData();
             } else {
-                $key = __CLASS__ . '_' . $this->getName();
+                $key = static::class . '_' . $this->getName();
 
                 try {
                     if (!($this->data = $cache->get($key, []))) {
@@ -130,7 +166,7 @@ abstract class AbstractDictionary implements DictionaryInterface
     /**
      * @return CacheInterface
      */
-    public function getCache(): CacheInterface
+    public function getCache(): ?CacheInterface
     {
         return $this->cache;
     }
@@ -148,7 +184,10 @@ abstract class AbstractDictionary implements DictionaryInterface
         return $this;
     }
 
-    abstract protected function loadData();
+    /**
+     * @return iterable
+     */
+    abstract protected function loadData():iterable;
 
     /**
      * @return string
@@ -173,7 +212,7 @@ abstract class AbstractDictionary implements DictionaryInterface
      * @param callable $callback
      * @return \Generator
      */
-    public function withView(callable $callback = null)
+    public function withView(callable $callback = null):iterable
     {
         if (is_callable($callback)) {
             yield from call_user_func_array($callback, $this->getData());
@@ -185,8 +224,36 @@ abstract class AbstractDictionary implements DictionaryInterface
     /**
      * @return int
      */
-    public function count()
+    public function count():int
     {
         return count($this->getData());
+    }
+
+    /**
+     * @param string $query
+     * @param bool $strict
+     * @param callable|null $searchView
+     * @return iterable
+     */
+    public function search(string $query, bool $strict = false, callable $searchView = null):iterable
+    {
+        $pattern = RegularExpression::createSearchPattern($query, $strict);
+
+        $data = [];
+        foreach ($this as $key => $value) {
+            $data[$key] = $value;
+        }
+
+        $defaultSearchView = $this->getDefaultSearchView();
+        if (is_null($searchView) && is_null($defaultSearchView)) {
+            $searchData = &$data;
+        } else {
+            $searchData = [];
+            foreach ($this->withView($searchView ?? $defaultSearchView) as $key => $item) {
+                $searchData[$key] = $item;
+            }
+        }
+
+        return array_intersect_key($data, preg_grep($pattern, $searchData));
     }
 }

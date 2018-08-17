@@ -11,5 +11,5 @@ interface DataProviderInterface
     /**
      * @return mixed
      */
-    public function getData();
+    public function getData():iterable;
 }

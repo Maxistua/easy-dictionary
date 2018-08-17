@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace EasyDictionary\DataProvider;
 
 use EasyDictionary\DataProviderInterface;
@@ -22,18 +24,21 @@ class Simple implements DataProviderInterface
     }
 
     /**
-     * @return array
+     * @return iterable
      */
-    public function getData()
+    public function getData():iterable
     {
         return $this->data;
     }
 
     /**
-     * @param array $data
+     * @param iterable $data
+     * @return $this
      */
-    public function setData($data = [])
+    public function setData(iterable $data = [])
     {
         $this->data = $data;
+
+        return $this;
     }
 }

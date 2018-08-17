@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace EasyDictionary\Dictionary;
 
 use EasyDictionary\AbstractDictionary;
@@ -13,7 +15,7 @@ class Simple extends AbstractDictionary
     /**
      * @inheritdoc
      */
-    protected function loadData()
+    protected function loadData():iterable
     {
         return $this->getDataProvider()->getData();
     }
