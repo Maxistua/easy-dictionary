@@ -4,40 +4,44 @@ namespace EasyDictionary\DataProvider;
 
 use EasyDictionary\DataProviderInterface;
 
+/**
+ * Class Callback
+ * @package EasyDictionary\DataProvider
+ */
 class Callback implements DataProviderInterface
 {
-    public $useCache = false;
-    public $useInMemoryCache = true;
+    protected $callback = null;
+    protected $arguments = [];
 
-    protected $callable = null;
-    protected $callableArgs = [];
-
-    public $cache;
-    public static $memoryCache = [];
-
+    /**
+     * Callback constructor.
+     * @param $params
+     */
     public function __construct($params)
     {
-        $this->callable = $params['callable'] ?? null;
-        $this->callableArgs = $params['callableArgs'] ?? null;
+        $this->setCallback($params['callable'] ?? null, $params['callableArgs'] ?? []);
     }
 
-    protected function loadData()
+    /**
+     * @param callable|null $callback
+     * @param array $arguments
+     * @return $this
+     */
+    public function setCallback(callable $callback = null, array $arguments = [])
     {
-        return is_callable($this->callable)
-            ? call_user_func_array($this->callable, $this->callableArgs)
-            : [];
+        $this->callback = $callback;
+        $this->arguments = $arguments;
+
+        return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getData()
     {
-        if (false === $this->useInMemoryCache) {
-            return $this->loadData();
-        }
-
-        if (empty(self::$memoryCache)) {
-            self::$memoryCache = $this->loadData();
-        }
-
-        return self::$memoryCache;
+        return is_callable($this->callback)
+            ? call_user_func_array($this->callback, $this->arguments)
+            : [];
     }
 }

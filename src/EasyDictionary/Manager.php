@@ -5,42 +5,53 @@ namespace EasyDictionary;
 use EasyDictionary\Exception\InvalidConfigurationException;
 use EasyDictionary\Exception\RuntimeException;
 
+/**
+ * Class Manager
+ * @package EasyDictionary
+ */
 class Manager
 {
-    protected $dictionaries = [];
-
-    public $defaultDictionaryType = 'EasyDictionary\Dictionary\Simple';
-    public $defaultDataProvider = 'EasyDictionary\DataProvider\Simple';
-
-    public $config = [];
-
     /**
-     * @param DictionaryInterface $dictionary
-     * @return Manager
-     * @throws \Exception
+     * @var string
      */
-    public function add(DictionaryInterface $dictionary)
-    {
-        $name = $dictionary->getName();
-
-        if (isset($this->dictionaries[$name])) {
-            throw new \Exception(sprintf('The key "%s" already exists', $name));
-        }
-
-        $this->dictionaries[$name] = $dictionary;
-
-        return $this;
-    }
+    public $defaultDictionaryType = 'EasyDictionary\Dictionary\Simple';
+    /**
+     * @var string
+     */
+    public $defaultDataProvider = 'EasyDictionary\DataProvider\Simple';
+    /**
+     * [
+     *      "dictionary_name" => [
+     *          ["class" => EasyDictionary\DictionaryInterface,]
+     *          ["cache" => Psr\SimpleCache\CacheInterface,]
+     *          ["cacheTTL" => 60,]
+     *          "data" => [
+     *              ["class" => EasyDictionary\DataProviderInterface,]
+     *              [data provider arguments]
+     *          ]
+     *      ],
+     *      ...
+     * ]
+     *
+     * @var array
+     */
+    public $config = [];
+    /**
+     * @var array
+     */
+    protected $dictionaries = [];
 
     /**
      * @param string $name
      * @return DictionaryInterface
-     * @throws \Exception
+     * @throws InvalidConfigurationException
+     * @throws RuntimeException
      */
     public function get(string $name): DictionaryInterface
     {
         if (!isset($this->dictionaries[$name])) {
-            $config = $this->config['dictionaries'][$name] ?? null;
+            $config = $this->getConfig()['dictionaries'][$name] ?? null;
+
             if (!$config) {
                 throw new RuntimeException(sprintf('Dictionary with key "%s" not found', $name));
             }
@@ -49,6 +60,43 @@ class Manager
         }
 
         return $this->dictionaries[$name];
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
+    /**
+     * @param array $config
+     * @return $this
+     */
+    public function setConfig(array $config)
+    {
+        $this->config = $config;
+
+        return $this;
+    }
+
+    /**
+     * @param DictionaryInterface $dictionary
+     * @return $this
+     * @throws RuntimeException
+     */
+    public function add(DictionaryInterface $dictionary)
+    {
+        $name = $dictionary->getName();
+
+        if (isset($this->dictionaries[$name])) {
+            throw new RuntimeException(sprintf('The dictionary with key "%s" already exists', $name));
+        }
+
+        $this->dictionaries[$name] = $dictionary;
+
+        return $this;
     }
 
     /**
@@ -69,12 +117,14 @@ class Manager
             throw new InvalidConfigurationException(sprintf('Class "%s" not found', $dataProviderClass));
         }
 
+        /** @var DataProviderInterface $dataProvider */
         $dataProvider = new $dataProviderClass($config['data']);
 
         /** @var DictionaryInterface $dictionary */
         $dictionary = new $dictionaryClass($name);
         $dictionary->setDataProvider($dataProvider);
         $dictionary->setDefaultView($config['view'] ?? null);
+        $dictionary->setCache($config['cache'] ?? null, $config['cacheTTL'] ?? 60);
 
         return $dictionary;
     }
