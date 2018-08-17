@@ -6,10 +6,18 @@ use Psr\SimpleCache\CacheInterface;
 
 interface DictionaryInterface extends \IteratorAggregate, \Countable
 {
+    const DATA_VALUE_TYPE_FLAT  = 'flat';
+    const DATA_VALUE_TYPE_ARRAY = 'array';
+
     /**
      * @return string
      */
     public function getName(): string;
+
+    /**
+     * @param string $dataValueType
+     */
+    public function setDataValueType(string $dataValueType);
 
     /**
      * @param DataProviderInterface $provider
@@ -27,16 +35,10 @@ interface DictionaryInterface extends \IteratorAggregate, \Countable
     public function setDefaultView(callable $view = null);
 
     /**
-     * @param callable|null $view
-     * @return mixed
-     */
-    public function setDefaultSearchView(callable $view = null);
-
-    /**
-     * @param callable $callback
+     * @param callable $callable
      * @return \Generator
      */
-    public function withView(callable $callback = null);
+    public function withView(callable $callable = null);
 
     /**
      * @param CacheInterface $cache
@@ -45,10 +47,15 @@ interface DictionaryInterface extends \IteratorAggregate, \Countable
     public function setCache(CacheInterface $cache, int $ttl = 3600);
 
     /**
-     * @param string $query
+     * @param array $searchFields
+     * @return mixed
+     */
+    public function setSearchFields(array $searchFields);
+
+    /**
+     * @param string $pattern
      * @param bool $strict
-     * @param callable|null $searchView
      * @return iterable
      */
-    public function search(string $query, bool $strict = false, callable $searchView = null):iterable;
+    public function search(string $pattern, bool $strict = false):iterable;
 }

@@ -29,9 +29,11 @@ class Manager
      *      "caches" => [
      *          "cache_name_2" => callable
      *      ]
+     *      ["defaultView" => function (...$data):\Generator {},]
      *      "dictionaries" => [
      *          "dictionary_name" => [
      *              ["class" => EasyDictionary\DictionaryInterface,]
+     *              ["dataType" => "flat|array"]
      *              ["cache" => "cache_name"]
      *              ["cacheTTL" => 60,]
      *              "data" => [
@@ -39,10 +41,11 @@ class Manager
      *                  [data provider arguments]
      *              ],
      *              ["view" => function (...$data):\Generator {},]
-     *              ["searchView" => function (...$data):\Generator {}]
+     *              ["searchFields" => [<string>, ...]]
      *          ],
+     *
+     *          ...
      *      ]
-     *      ...
      * ]
      *
      * @var array
@@ -114,49 +117,53 @@ class Manager
 
     /**
      * @param $name
-     * @param $config
+     * @param $dictionaryConfig
      * @return DictionaryInterface
      * @throws InvalidConfigurationException
      */
-    protected function create(string $name, array $config): DictionaryInterface
+    protected function create(string $name, array $dictionaryConfig): DictionaryInterface
     {
-        $dictionaryClass = $config['class'] ?? $this->defaultDictionaryType;
+        $dictionaryClass = $dictionaryConfig['class'] ?? $this->defaultDictionaryType;
         if (!class_exists($dictionaryClass)) {
             throw new InvalidConfigurationException(sprintf('Class "%s" not found', $dictionaryClass));
         }
 
-        $dataProviderClass = $config['data']['class'] ?? $this->defaultDataProvider;
+        $dataProviderClass = $dictionaryConfig['data']['class'] ?? $this->defaultDataProvider;
         if (!class_exists($dataProviderClass)) {
             throw new InvalidConfigurationException(sprintf('Class "%s" not found', $dataProviderClass));
         }
 
         /** @var DataProviderInterface $dataProvider */
-        $dataProvider = new $dataProviderClass($config['data']);
+        $dataProvider = new $dataProviderClass($dictionaryConfig['data']);
 
         /** @var DictionaryInterface $dictionary */
         $dictionary = new $dictionaryClass($name);
         $dictionary->setDataProvider($dataProvider);
-        $dictionary->setDefaultView($config['view'] ?? null);
-        $dictionary->setDefaultSearchView($config['searchView'] ?? null);
+        $dictionary->setDefaultView($dictionaryConfig['view'] ?? ($this->getConfig()['defaultView'] ?? null));
+        $dictionary->setSearchFields($dictionaryConfig['searchFields'] ?? []);
 
-        if (isset($config['cache'])) {
+        if (isset($dictionaryConfig['dataType'])) {
+            $dictionary->setDataValueType($dictionaryConfig['dataType']);
+        }
+
+        if (isset($dictionaryConfig['cache'])) {
             $caches = $this->getConfig()['caches'] ?? [];
 
-            if (!isset($caches[$config['cache']])) {
-                throw new InvalidConfigurationException(sprintf('Cache "%s" not found', $config['cache']));
+            if (!isset($caches[$dictionaryConfig['cache']])) {
+                throw new InvalidConfigurationException(sprintf('Cache "%s" not found', $dictionaryConfig['cache']));
             }
 
-            if (!is_callable($caches[$config['cache']])) {
-                throw new InvalidConfigurationException(sprintf('Cache "%s" not callable', $config['cache']));
+            if (!is_callable($caches[$dictionaryConfig['cache']])) {
+                throw new InvalidConfigurationException(sprintf('Cache "%s" not callable', $dictionaryConfig['cache']));
             }
 
-            $cache = $caches[$config['cache']]();
+            $cache = $caches[$dictionaryConfig['cache']]();
 
             if (!($cache instanceof CacheInterface)) {
                 throw new InvalidConfigurationException(sprintf('Object with class "%s" does not support expected interface', get_class($cache)));
             }
 
-            $dictionary->setCache($cache, $config['cacheTTL'] ?? 60);
+            $dictionary->setCache($cache, $dictionaryConfig['cacheTTL'] ?? 60);
         }
 
         return $dictionary;

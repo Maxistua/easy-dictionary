@@ -22,7 +22,7 @@ class RegularExpression
         $patternGroups = [];
         foreach ($searchPhrases as $phrase) {
             $phrase = preg_quote($phrase, '/');
-            $patternGroups[] = $strictMode ? "(^{$phrase}$)" : "({$phrase})";
+            $patternGroups[] = $strictMode ? "((\s+)?{$phrase}(\s+)?)" : "({$phrase})";
         }
 
         $pattern = '/' . implode('|', $patternGroups) . '/i';
