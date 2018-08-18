@@ -1,0 +1,8 @@
+checks:
+    php: true
+build:
+  nodes:
+    analysis:
+      tests:
+        override:
+          - command: phpcs-run --config phpcs.xml

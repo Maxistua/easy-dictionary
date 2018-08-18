@@ -38,7 +38,7 @@ abstract class AbstractDictionary implements DictionaryInterface
     protected $cacheTTL = 0;
 
     /**
-     * @var array
+     * @var iterable
      */
     protected $data = [];
 
