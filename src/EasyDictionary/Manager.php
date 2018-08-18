@@ -17,7 +17,45 @@ class Manager
     /**
      * @var string
      */
-    public $defaultDictionaryType = 'EasyDictionary\Dictionary\Simple';
+    public $defaultDictionary = 'EasyDictionary\Dictionary\Simple';
+
+    /**
+     * @return string
+     */
+    public function getDefaultDictionary(): string
+    {
+        return $this->defaultDictionary;
+    }
+
+    /**
+     * @param string $defaultDictionary
+     * @return $this
+     */
+    public function setDefaultDictionary(string $defaultDictionary)
+    {
+        $this->defaultDictionary = $defaultDictionary;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultDataProvider(): string
+    {
+        return $this->defaultDataProvider;
+    }
+
+    /**
+     * @param string $defaultDataProvider
+     * @return $this
+     */
+    public function setDefaultDataProvider(string $defaultDataProvider)
+    {
+        $this->defaultDataProvider = $defaultDataProvider;
+
+        return $this;
+    }
 
     /**
      * @var string
@@ -123,12 +161,12 @@ class Manager
      */
     protected function create(string $name, array $dictionaryConfig): DictionaryInterface
     {
-        $dictionaryClass = $dictionaryConfig['class'] ?? $this->defaultDictionaryType;
+        $dictionaryClass = $dictionaryConfig['class'] ?? $this->getDefaultDictionary();
         if (!class_exists($dictionaryClass)) {
             throw new InvalidConfigurationException(sprintf('Class "%s" not found', $dictionaryClass));
         }
 
-        $dataProviderClass = $dictionaryConfig['data']['class'] ?? $this->defaultDataProvider;
+        $dataProviderClass = $dictionaryConfig['data']['class'] ?? $this->getDefaultDataProvider();
         if (!class_exists($dataProviderClass)) {
             throw new InvalidConfigurationException(sprintf('Class "%s" not found', $dataProviderClass));
         }

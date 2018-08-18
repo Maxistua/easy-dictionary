@@ -11,5 +11,8 @@
         "psr-4": {
             "EasyDictionary\\": "src/EasyDictionary"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7"
     }
 }
