@@ -5,4 +5,4 @@ build:
     analysis:
       tests:
         override:
-          - command: phpcs-run --config phpcs.xml
+          - command: phpcs-run
