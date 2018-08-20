@@ -6,6 +6,9 @@ namespace EasyDictionary;
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversDefaultClass \EasyDictionary\Manager
+ */
 class ManagerTest extends TestCase
 {
     public function testClassExistence()
@@ -23,11 +26,14 @@ class ManagerTest extends TestCase
     public function testDefaultValues()
     {
         $manager = new \EasyDictionary\Manager();
-        $this->assertEquals('EasyDictionary\Dictionary\Simple', $manager->defaultDictionary);
-        $this->assertEquals('EasyDictionary\DataProvider\Simple', $manager->defaultDataProvider);
+        $this->assertEquals(\EasyDictionary\Dictionary\Simple::class, $manager->defaultDictionary);
+        $this->assertEquals(\EasyDictionary\DataProvider\Simple::class, $manager->defaultDataProvider);
         $this->assertEquals([], $manager->config);
     }
 
+    /**
+     * @cover ::getDefaultProvider
+     */
     public function testSettersAndGetters()
     {
         $manager = new \EasyDictionary\Manager();
