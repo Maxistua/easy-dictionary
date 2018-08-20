@@ -198,7 +198,9 @@ class Manager
             $cache = $caches[$dictionaryConfig['cache']]();
 
             if (!($cache instanceof CacheInterface)) {
-                throw new InvalidConfigurationException(sprintf('Object with class "%s" does not support expected interface', get_class($cache)));
+                throw new InvalidConfigurationException(
+                    sprintf('Object with class "%s" does not support expected interface', get_class($cache))
+                );
             }
 
             $dictionary->setCache($cache, $dictionaryConfig['cacheTTL'] ?? 60);

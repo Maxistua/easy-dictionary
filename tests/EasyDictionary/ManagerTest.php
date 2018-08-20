@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace EasyDictionary;
+
 use PHPUnit\Framework\TestCase;
 
 class ManagerTest extends TestCase
@@ -38,6 +40,4 @@ class ManagerTest extends TestCase
         $manager->setConfig([1, 2, 3]);
         $this->assertEquals([1, 2, 3], $manager->getConfig());
     }
-
-
 }

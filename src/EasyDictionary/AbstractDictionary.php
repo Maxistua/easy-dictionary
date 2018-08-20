@@ -277,10 +277,8 @@ abstract class AbstractDictionary implements DictionaryInterface
             $data[$key] = $value;
 
             if (is_array($value)) {
-                $searchData[$key] = (string)$key . ' ' . join(' ', empty($searchFields)
-                        ? $value
-                        : array_intersect_key($value, $searchFields)
-                    );
+                $searchData[$key] = (string)$key . ' ' .
+                    join(' ', empty($searchFields) ? $value : array_intersect_key($value, $searchFields));
             } else {
                 $searchData[$key] = (string)$key . ' ' . (string)$value;
             }
