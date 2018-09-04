@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace EasyDictionary;
 
 use Psr\SimpleCache\CacheInterface;
+use EasyDictionary\Interfaces\DataProviderInterface;
+use EasyDictionary\Interfaces\DictionaryInterface;
 
 /**
  * Class AbstractDictionary

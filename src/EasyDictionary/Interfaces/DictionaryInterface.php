@@ -1,9 +1,14 @@
 <?php
 
-namespace EasyDictionary;
+namespace EasyDictionary\Interfaces;
 
 use Psr\SimpleCache\CacheInterface;
 
+/**
+ * Interface DictionaryInterface
+ *
+ * @package EasyDictionary
+ */
 interface DictionaryInterface extends \IteratorAggregate, \Countable
 {
     const DATA_VALUE_TYPE_FLAT  = 'flat';

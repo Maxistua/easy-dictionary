@@ -1,9 +1,10 @@
 <?php
 
-namespace EasyDictionary;
+namespace EasyDictionary\Interfaces;
 
 /**
  * Interface DataProviderInterface
+ * 
  * @package EasyDictionary
  */
 interface DataProviderInterface

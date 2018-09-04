@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace EasyDictionary\DataProvider;
 
-use EasyDictionary\DataProviderInterface;
+use EasyDictionary\Interfaces\DataProviderInterface;
 
 /**
  * Class Simple
