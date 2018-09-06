@@ -2,6 +2,8 @@
 
 namespace EasyDictionary\Interfaces;
 
+use Psr\SimpleCache\CacheInterface;
+
 /**
  * Interface ConfigInterface
  *
@@ -9,6 +11,8 @@ namespace EasyDictionary\Interfaces;
  */
 interface ConfigInterface
 {
+    const DEFAULT_CACHE_TTL = 60;
+
     /**
      * @return string
      */
@@ -29,5 +33,9 @@ interface ConfigInterface
      */
     public function getDefaultView();
 
-    public function getCaches():array;
+    /**
+     * @param string $name
+     * @return array
+     */
+    public function getCache(string $name):?CacheInterface;
 }

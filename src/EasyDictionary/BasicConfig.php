@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EasyDictionary;
 
 use EasyDictionary\Interfaces\ConfigInterface;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * Class BasicConfig
@@ -50,8 +51,8 @@ class BasicConfig implements ConfigInterface
         return $this->defaultView;
     }
 
-    public function getCaches():array
+    public function getCache(string $name):?CacheInterface
     {
-        return $this->caches;
+        return null;
     }
 }

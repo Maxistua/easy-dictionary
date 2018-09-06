@@ -20,6 +20,12 @@ interface DictionaryInterface extends \IteratorAggregate, \Countable
     public function getName(): string;
 
     /**
+     * @param $name
+     * @return string
+     */
+    public function setName(string $name);
+
+    /**
      * @param string $dataValueType
      */
     public function setDataValueType(string $dataValueType);
