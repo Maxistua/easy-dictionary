@@ -146,9 +146,9 @@ abstract class AbstractDictionary implements DictionaryInterface
     }
 
     /**
-     * @return DataProviderInterface
+     * @return null|DataProviderInterface
      */
-    public function getDataProvider(): DataProviderInterface
+    public function getDataProvider(): ?DataProviderInterface
     {
         return $this->dataProvider;
     }

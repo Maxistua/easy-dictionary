@@ -4,7 +4,7 @@ namespace EasyDictionary\Interfaces;
 
 /**
  * Interface DataProviderInterface
- * 
+ *
  * @package EasyDictionary
  */
 interface DataProviderInterface

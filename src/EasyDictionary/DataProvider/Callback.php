@@ -16,17 +16,20 @@ class Callback implements DataProviderInterface
     protected $arguments = [];
 
     /**
-     * Callback constructor.
-     * @param $params
+     * @param array $datProviderConfig
      */
-    public function __construct($params)
+    public function __construct($datProviderConfig = [])
     {
-        $this->setCallback($params['callable'] ?? null, $params['callableArgs'] ?? []);
+        $this->setCallback(
+            $datProviderConfig['callable'] ?? null,
+            $datProviderConfig['callableArgs'] ?? []
+        );
     }
 
     /**
      * @param callable|null $callback
      * @param array $arguments
+     *
      * @return $this
      */
     public function setCallback(callable $callback = null, array $arguments = [])
