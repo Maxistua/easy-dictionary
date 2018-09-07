@@ -29,13 +29,13 @@ interface ConfigInterface
     public function getDictionaryConfig():array;
 
     /**
-     * @return callable
+     * @return null|callable
      */
-    public function getDefaultView();
+    public function getDefaultView():?callable;
 
     /**
      * @param string $name
-     * @return array
+     * @return null|CacheInterface
      */
     public function getCache(string $name):?CacheInterface;
 }

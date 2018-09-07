@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace EasyDictionary;
 
-use EasyDictionary\RegularExpression;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversDefaultClass RegularExpression
+ * @coversDefaultClass \EasyDictionary\RegularExpression
  */
 class RegularExpressionTest extends TestCase
 {
@@ -17,7 +16,7 @@ class RegularExpressionTest extends TestCase
      */
     public function testClassExistence()
     {
-        $this->assertTrue(class_exists('\EasyDictionary\RegularExpression'));
+        self::assertTrue(class_exists('\EasyDictionary\RegularExpression'));
     }
 
     /**
@@ -25,10 +24,10 @@ class RegularExpressionTest extends TestCase
      */
     public function testCreateSearchPatternFunction()
     {
-        $this->assertEquals('/(one)/i', RegularExpression::createSearchPattern('one'));
-        $this->assertEquals('/(one)|(two)/i', RegularExpression::createSearchPattern('one,two'));
-        $this->assertEquals('/(one)|(two)/i', RegularExpression::createSearchPattern(['one', 'two']));
-        $this->assertEquals(
+        self::assertEquals('/(one)/i', RegularExpression::createSearchPattern('one'));
+        self::assertEquals('/(one)|(two)/i', RegularExpression::createSearchPattern('one,two'));
+        self::assertEquals('/(one)|(two)/i', RegularExpression::createSearchPattern(['one', 'two']));
+        self::assertEquals(
             '/((\s+)?one(\s+)?)/i',
             RegularExpression::createSearchPattern(['one'], true)
         );
