@@ -121,8 +121,6 @@ class ManagerTest extends TestCase
         $dictionaryMock->expects(self::once())->method('setName');
         $dictionaryMock->expects(self::once())->method('setDefaultView')->with(null);
         $dictionaryMock->expects(self::once())->method('setSearchFields')->with([]);
-        $dictionaryMock->expects(self::once())->method('setDataValueType')
-            ->with(DictionaryInterface::DATA_VALUE_TYPE_FLAT);
         $dictionaryMock->expects(self::once())->method('setCache')->with($cacheMock, 1);
 
         $config = $this->createMock('\EasyDictionary\Interfaces\ConfigInterface');
@@ -131,7 +129,6 @@ class ManagerTest extends TestCase
             'test' => [
                 'cache' => 'testCache',
                 'cacheTTL' => 1,
-                'dataType' => DictionaryInterface::DATA_VALUE_TYPE_FLAT,
                 'data' => []
             ]
         ]);

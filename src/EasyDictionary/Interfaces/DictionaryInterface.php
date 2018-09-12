@@ -11,9 +11,6 @@ use Psr\SimpleCache\CacheInterface;
  */
 interface DictionaryInterface extends \IteratorAggregate, \Countable
 {
-    const DATA_VALUE_TYPE_FLAT = 'flat';
-    const DATA_VALUE_TYPE_ARRAY = 'array';
-
     /**
      * @return string
      */
@@ -24,11 +21,6 @@ interface DictionaryInterface extends \IteratorAggregate, \Countable
      * @return string
      */
     public function setName(string $name);
-
-    /**
-     * @param string $dataValueType
-     */
-    public function setDataValueType(string $dataValueType);
 
     /**
      * @param DataProviderInterface $provider

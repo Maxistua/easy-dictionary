@@ -50,11 +50,6 @@ abstract class AbstractDictionary implements DictionaryInterface
     protected $searchFields = [];
 
     /**
-     * @var string
-     */
-    protected $dataValueType = self::DATA_VALUE_TYPE_FLAT;
-
-    /**
      * @var bool
      */
     protected $dataLoaded = false;
@@ -102,25 +97,6 @@ abstract class AbstractDictionary implements DictionaryInterface
     public function setDefaultView(callable $view = null)
     {
         $this->view = $view;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDataValueType(): string
-    {
-        return $this->dataValueType;
-    }
-
-    /**
-     * @param string $dataValueType
-     * @return $this
-     */
-    public function setDataValueType(string $dataValueType)
-    {
-        $this->dataValueType = $dataValueType;
 
         return $this;
     }
@@ -263,18 +239,9 @@ abstract class AbstractDictionary implements DictionaryInterface
      */
     public function search(string $pattern, bool $strict = false): iterable
     {
-        if (self::DATA_VALUE_TYPE_FLAT === $this->dataValueType) {
-            $data = [];
-            foreach ($this as $key => $value) {
-                $data[$key] = (string)$key . ' ' . (string)$value;
-            }
-
-            return preg_grep($pattern, $data);
-        }
-
         $data = [];
         $searchData = [];
-        $searchFields = $this->getSearchFields($strict);
+        $searchFields = array_filter($this->getSearchFields($strict));
         foreach ($this as $key => $value) {
             $data[$key] = $value;
 
