@@ -3,6 +3,9 @@ checks:
 build:
   nodes:
     analysis:
+      project_setup:
+        override: true
       tests:
         override:
-          - command: phpcs-run ./
+          - php-scrutinizer-run --enable-security-analysis
+    tests-and-coverage:

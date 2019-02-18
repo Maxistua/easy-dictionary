@@ -70,7 +70,7 @@ class BasicConfigTest extends TestCase
      */
     public function testSetGetDefaultView()
     {
-        $callable = function ($test) {
+        $callable = function () {
         };
 
         $config = new BasicConfig();
@@ -86,6 +86,7 @@ class BasicConfigTest extends TestCase
      */
     public function testAddGetCache()
     {
+        /** @var CacheInterface $cache */
         $cache = self::createMock(CacheInterface::class);
 
         $config = new BasicConfig();
