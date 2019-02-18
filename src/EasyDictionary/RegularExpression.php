@@ -16,7 +16,7 @@ class RegularExpression
      *
      * @return string
      */
-    public static function createSearchPattern($searchPhrases, bool $strictMode = false):string
+    public static function createSearchPattern($searchPhrases, bool $strictMode = false): string
     {
         if (!is_array($searchPhrases)) {
             $searchPhrases = explode(',', $searchPhrases);

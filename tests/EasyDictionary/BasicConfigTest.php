@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EasyDictionary;
 
+use EasyDictionary\DataProvider\Simple as SimpleDataProvider;
+use EasyDictionary\Dictionary\Simple as SimpleDictionary;
 use PHPUnit\Framework\TestCase;
 use Psr\SimpleCache\CacheInterface;
 
@@ -28,7 +30,7 @@ class BasicConfigTest extends TestCase
         $config = new BasicConfig();
 
         self::assertEquals(
-            \EasyDictionary\DataProvider\Simple::class,
+            SimpleDataProvider::class,
             $config->getDefaultDataProviderClass()
         );
     }
@@ -41,7 +43,7 @@ class BasicConfigTest extends TestCase
         $config = new BasicConfig();
 
         self::assertEquals(
-            \EasyDictionary\Dictionary\Simple::class,
+            SimpleDictionary::class,
             $config->getDefaultDictionaryClass()
         );
     }

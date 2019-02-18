@@ -7,10 +7,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
-class InvalidArgException extends \Exception implements InvalidArgumentException {
-
-}
-
 /**
  * @coversDefaultClass \EasyDictionary\Dictionary\Simple
  */
@@ -139,7 +135,7 @@ class SimpleTest extends TestCase
         $dictionary = new Simple('test');
         $dictionary->setDataProvider($dataProviderMock);
 
-        self::assertTrue($dictionary instanceof  \Countable);
+        self::assertTrue($dictionary instanceof \Countable);
         self::assertEquals(4, count($dictionary));
     }
 
@@ -194,7 +190,7 @@ class SimpleTest extends TestCase
 
         $dictionary = new Simple('test');
         $dictionary->setDataProvider($dataProviderMock);
-        $dictionary->setDefaultView(function($rows) {
+        $dictionary->setDefaultView(function ($rows) {
             foreach ($rows as $key => $row) {
                 yield $key . ' ' . $row;
             }
@@ -301,4 +297,9 @@ class SimpleTest extends TestCase
 
         self::assertEquals(['b' => ['code' => 44]], $dictionary->search('/44/'));
     }
+}
+
+class InvalidArgException extends \Exception implements InvalidArgumentException
+{
+
 }

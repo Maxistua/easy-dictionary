@@ -46,7 +46,7 @@ class Manager
      * @throws InvalidConfigurationException
      * @throws RuntimeException
      */
-    public function get(string $name): DictionaryInterface
+    public function get(string $name): ?DictionaryInterface
     {
         if (!isset($this->dictionaries[$name])) {
             $config = $this->getConfig();
@@ -62,7 +62,7 @@ class Manager
             $this->add($this->create($name, $dictionaryConfig));
         }
 
-        return $this->dictionaries[$name];
+        return $this->dictionaries[$name] ?? null;
     }
 
     /**
@@ -105,49 +105,6 @@ class Manager
     }
 
     /**
-     * @param string $class
-     *
-     * @return DictionaryInterface
-     * @throws InvalidConfigurationException
-     */
-    public function createDictionary(string $class): DictionaryInterface
-    {
-        if (!class_exists($class)) {
-            throw new InvalidConfigurationException(sprintf('Class "%s" not found', $class));
-        }
-
-        $dictionary = new $class;
-
-        if (!($dictionary instanceof DictionaryInterface)) {
-            throw new InvalidConfigurationException(sprintf('Class "%s" not found', $class));
-        }
-
-        return $dictionary;
-    }
-
-    /**
-     * @param string $class
-     * @param array $config
-     *
-     * @return DataProviderInterface
-     * @throws InvalidConfigurationException
-     */
-    protected function createDataProvider(string $class, array $config): DataProviderInterface
-    {
-        if (!class_exists($class)) {
-            throw new InvalidConfigurationException(sprintf('Class "%s" not found', $class));
-        }
-
-        $dataProvider = new $class($config);
-
-        if (!($dataProvider instanceof DataProviderInterface)) {
-            throw new InvalidConfigurationException(sprintf('Class "%s" is not ', $class));
-        }
-
-        return $dataProvider;
-    }
-
-    /**
      * @param $name
      * @param $dictionaryConfig
      * @return DictionaryInterface
@@ -171,15 +128,54 @@ class Manager
         $dictionary->setDefaultView($dictionaryConfig['view'] ?? ($config->getDefaultView() ?? null));
         $dictionary->setSearchFields($dictionaryConfig['searchFields'] ?? []);
 
-        if (isset($dictionaryConfig['dataType'])) {
-            $dictionary->setDataValueType($dictionaryConfig['dataType']);
-        }
-
         if (isset($dictionaryConfig['cache'])) {
             $dictionary->setCache(
                 $config->getCache($dictionaryConfig['cache']),
                 $dictionaryConfig['cacheTTL'] ?? ConfigInterface::DEFAULT_CACHE_TTL
             );
+        }
+
+        return $dictionary;
+    }
+
+    /**
+     * @param string $class
+     * @param array $config
+     *
+     * @return DataProviderInterface
+     * @throws InvalidConfigurationException
+     */
+    protected function createDataProvider(string $class, array $config): DataProviderInterface
+    {
+        if (!class_exists($class)) {
+            throw new InvalidConfigurationException(sprintf('Class "%s" not found', $class));
+        }
+
+        $dataProvider = new $class($config);
+
+        if (!($dataProvider instanceof DataProviderInterface)) {
+            throw new InvalidConfigurationException(sprintf('Class "%s" is not implement required interface', $class));
+        }
+
+        return $dataProvider;
+    }
+
+    /**
+     * @param string $class
+     *
+     * @return DictionaryInterface
+     * @throws InvalidConfigurationException
+     */
+    public function createDictionary(string $class): DictionaryInterface
+    {
+        if (!class_exists($class)) {
+            throw new InvalidConfigurationException(sprintf('Class "%s" not found', $class));
+        }
+
+        $dictionary = new $class;
+
+        if (!($dictionary instanceof DictionaryInterface)) {
+            throw new InvalidConfigurationException(sprintf('Class "%s" not found', $class));
         }
 
         return $dictionary;

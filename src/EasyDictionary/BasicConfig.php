@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EasyDictionary;
 
+use EasyDictionary\DataProvider\Simple as SimpleDataProvider;
+use EasyDictionary\Dictionary\Simple as SimpleDictionary;
 use EasyDictionary\Interfaces\ConfigInterface;
 use Psr\SimpleCache\CacheInterface;
 
@@ -14,8 +16,8 @@ use Psr\SimpleCache\CacheInterface;
  */
 class BasicConfig implements ConfigInterface
 {
-    protected $defaultDataProviderClass = \EasyDictionary\DataProvider\Simple::class;
-    protected $defaultDictionaryClass = \EasyDictionary\Dictionary\Simple::class;
+    protected $defaultDataProviderClass = SimpleDataProvider::class;
+    protected $defaultDictionaryClass = SimpleDictionary::class;
     protected $dictionaryConfig = [];
     protected $defaultView = null;
     protected $caches = [];

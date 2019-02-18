@@ -26,7 +26,7 @@ class Simple implements DataProviderInterface
     /**
      * @return iterable
      */
-    public function getData():iterable
+    public function getData(): iterable
     {
         return $this->data;
     }

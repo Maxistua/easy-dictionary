@@ -16,26 +16,26 @@ interface ConfigInterface
     /**
      * @return string
      */
-    public function getDefaultDataProviderClass():string;
+    public function getDefaultDataProviderClass(): string;
 
     /**
      * @return string
      */
-    public function getDefaultDictionaryClass():string;
+    public function getDefaultDictionaryClass(): string;
 
     /**
      * @return array
      */
-    public function getDictionaryConfig():array;
+    public function getDictionaryConfig(): array;
 
     /**
      * @return null|callable
      */
-    public function getDefaultView():?callable;
+    public function getDefaultView(): ?callable;
 
     /**
      * @param string $name
      * @return null|CacheInterface
      */
-    public function getCache(string $name):?CacheInterface;
+    public function getCache(string $name): ?CacheInterface;
 }

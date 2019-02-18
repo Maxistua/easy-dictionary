@@ -32,7 +32,7 @@ class Callback implements DataProviderInterface
      *
      * @return $this
      */
-    public function setCallback(callable $callback = null, array $arguments = [])
+    public function setCallback(callable $callback = null, array $arguments = []): DataProviderInterface
     {
         $this->callback = $callback;
         $this->arguments = $arguments;
@@ -43,7 +43,7 @@ class Callback implements DataProviderInterface
     /**
      * @return iterable
      */
-    public function getData():iterable
+    public function getData(): iterable
     {
         return is_callable($this->callback)
             ? call_user_func_array($this->callback, $this->arguments)
