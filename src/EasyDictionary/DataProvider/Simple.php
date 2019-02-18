@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace EasyDictionary\DataProvider;
 
-use EasyDictionary\DataProviderInterface;
+use EasyDictionary\Interfaces\DataProviderInterface;
 
 /**
  * Class Simple
+ *
  * @package EasyDictionary\DataProvider
  */
 class Simple implements DataProviderInterface
@@ -15,24 +16,24 @@ class Simple implements DataProviderInterface
     protected $data = [];
 
     /**
-     * Simple constructor.
-     * @param array $data
+     * @param array $datProviderConfig
      */
-    public function __construct($data = [])
+    public function __construct($datProviderConfig = [])
     {
-        $this->setData($data['items'] ?? []);
+        $this->setData($datProviderConfig['items'] ?? []);
     }
 
     /**
      * @return iterable
      */
-    public function getData():iterable
+    public function getData(): iterable
     {
         return $this->data;
     }
 
     /**
      * @param iterable $data
+     *
      * @return $this
      */
     public function setData(iterable $data = [])

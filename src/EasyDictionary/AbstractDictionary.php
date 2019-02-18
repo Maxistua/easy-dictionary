@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EasyDictionary;
 
+use EasyDictionary\Interfaces\DataProviderInterface;
+use EasyDictionary\Interfaces\DictionaryInterface;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -48,11 +50,6 @@ abstract class AbstractDictionary implements DictionaryInterface
     protected $searchFields = [];
 
     /**
-     * @var string
-     */
-    protected $dataValueType = self::DATA_VALUE_TYPE_FLAT;
-
-    /**
      * @var bool
      */
     protected $dataLoaded = false;
@@ -67,33 +64,6 @@ abstract class AbstractDictionary implements DictionaryInterface
     }
 
     /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     * @return self
-     */
-    public function setName(string $name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return callable|null
-     */
-    public function getDefaultView(): ?callable
-    {
-        return $this->view;
-    }
-
-    /**
      * @param callable|null $view
      * @return $this
      */
@@ -105,48 +75,9 @@ abstract class AbstractDictionary implements DictionaryInterface
     }
 
     /**
-     * @return string
+     * @return null|DataProviderInterface
      */
-    public function getDataValueType(): string
-    {
-        return $this->dataValueType;
-    }
-
-    /**
-     * @param string $dataValueType
-     * @return $this
-     */
-    public function setDataValueType(string $dataValueType)
-    {
-        $this->dataValueType = $dataValueType;
-
-        return $this;
-    }
-
-    /**
-     * @param bool $strict
-     * @return array
-     */
-    public function getSearchFields(bool $strict = false): array
-    {
-        return true === $strict ? array_filter($this->searchFields) : $this->searchFields;
-    }
-
-    /**
-     * @param array $searchFields
-     * @return $this
-     */
-    public function setSearchFields(array $searchFields)
-    {
-        $this->searchFields = $searchFields;
-
-        return $this;
-    }
-
-    /**
-     * @return DataProviderInterface
-     */
-    public function getDataProvider(): DataProviderInterface
+    public function getDataProvider(): ?DataProviderInterface
     {
         return $this->dataProvider;
     }
@@ -160,6 +91,30 @@ abstract class AbstractDictionary implements DictionaryInterface
         $this->dataProvider = $provider;
 
         return $this;
+    }
+
+    /**
+     * @return \Iterator
+     */
+    public function getIterator(): iterable
+    {
+        $view = $this->getDefaultView();
+
+        if (is_null($view)) {
+            foreach ($this->getData() as $key => $item) {
+                yield $key => $item;
+            }
+        } else {
+            yield from $this->withView($view);
+        }
+    }
+
+    /**
+     * @return callable|null
+     */
+    public function getDefaultView(): ?callable
+    {
+        return $this->view;
     }
 
     /**
@@ -218,19 +173,22 @@ abstract class AbstractDictionary implements DictionaryInterface
     abstract protected function loadData(): iterable;
 
     /**
-     * @return \Iterator
+     * @return string
      */
-    public function getIterator(): iterable
+    public function getName(): string
     {
-        $view = $this->getDefaultView();
+        return $this->name;
+    }
 
-        if (is_null($view)) {
-            foreach ($this->getData() as $key => $item) {
-                yield $key => $item;
-            }
-        } else {
-            yield from $this->withView($view);
-        }
+    /**
+     * @param string $name
+     * @return self
+     */
+    public function setName(string $name)
+    {
+        $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -261,18 +219,9 @@ abstract class AbstractDictionary implements DictionaryInterface
      */
     public function search(string $pattern, bool $strict = false): iterable
     {
-        if (self::DATA_VALUE_TYPE_FLAT === $this->dataValueType) {
-            $data = [];
-            foreach ($this as $key => $value) {
-                $data[$key] = (string)$key . ' ' . (string)$value;
-            }
-
-            return preg_grep($pattern, $data);
-        }
-
         $data = [];
         $searchData = [];
-        $searchFields = $this->getSearchFields($strict);
+        $searchFields = array_filter($this->getSearchFields($strict));
         foreach ($this as $key => $value) {
             $data[$key] = $value;
 
@@ -285,5 +234,25 @@ abstract class AbstractDictionary implements DictionaryInterface
         }
 
         return array_intersect_key($data, preg_grep($pattern, $searchData));
+    }
+
+    /**
+     * @param bool $strict
+     * @return array
+     */
+    public function getSearchFields(bool $strict = false): array
+    {
+        return true === $strict ? array_filter($this->searchFields) : $this->searchFields;
+    }
+
+    /**
+     * @param array $searchFields
+     * @return $this
+     */
+    public function setSearchFields(array $searchFields)
+    {
+        $this->searchFields = $searchFields;
+
+        return $this;
     }
 }

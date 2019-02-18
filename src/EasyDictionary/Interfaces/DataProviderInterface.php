@@ -1,9 +1,10 @@
 <?php
 
-namespace EasyDictionary;
+namespace EasyDictionary\Interfaces;
 
 /**
  * Interface DataProviderInterface
+ *
  * @package EasyDictionary
  */
 interface DataProviderInterface
@@ -11,5 +12,5 @@ interface DataProviderInterface
     /**
      * @return mixed
      */
-    public function getData():iterable;
+    public function getData(): iterable;
 }

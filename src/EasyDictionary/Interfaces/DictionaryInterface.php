@@ -1,23 +1,26 @@
 <?php
 
-namespace EasyDictionary;
+namespace EasyDictionary\Interfaces;
 
 use Psr\SimpleCache\CacheInterface;
 
+/**
+ * Interface DictionaryInterface
+ *
+ * @package EasyDictionary
+ */
 interface DictionaryInterface extends \IteratorAggregate, \Countable
 {
-    const DATA_VALUE_TYPE_FLAT  = 'flat';
-    const DATA_VALUE_TYPE_ARRAY = 'array';
-
     /**
      * @return string
      */
     public function getName(): string;
 
     /**
-     * @param string $dataValueType
+     * @param $name
+     * @return string
      */
-    public function setDataValueType(string $dataValueType);
+    public function setName(string $name);
 
     /**
      * @param DataProviderInterface $provider
@@ -27,7 +30,7 @@ interface DictionaryInterface extends \IteratorAggregate, \Countable
     /**
      * @return DataProviderInterface
      */
-    public function getDataProvider(): DataProviderInterface;
+    public function getDataProvider(): ?DataProviderInterface;
 
     /**
      * @param callable $view
@@ -57,5 +60,5 @@ interface DictionaryInterface extends \IteratorAggregate, \Countable
      * @param bool $strict
      * @return iterable
      */
-    public function search(string $pattern, bool $strict = false):iterable;
+    public function search(string $pattern, bool $strict = false): iterable;
 }

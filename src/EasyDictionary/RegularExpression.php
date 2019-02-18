@@ -9,11 +9,14 @@ namespace EasyDictionary;
 class RegularExpression
 {
     /**
+     * Create search pattern
+     *
      * @param string|array $searchPhrases
      * @param bool $strictMode
+     *
      * @return string
      */
-    public static function createSearchPattern($searchPhrases, bool $strictMode = false):string
+    public static function createSearchPattern($searchPhrases, bool $strictMode = false): string
     {
         if (!is_array($searchPhrases)) {
             $searchPhrases = explode(',', $searchPhrases);

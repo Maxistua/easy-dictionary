@@ -8,6 +8,7 @@ use EasyDictionary\AbstractDictionary;
 
 /**
  * Class Simple
+ *
  * @package EasyDictionary\Dictionary
  */
 class Simple extends AbstractDictionary
@@ -15,8 +16,12 @@ class Simple extends AbstractDictionary
     /**
      * @inheritdoc
      */
-    protected function loadData():iterable
+    protected function loadData(): iterable
     {
-        return $this->getDataProvider()->getData();
+        $dataProvider = $this->getDataProvider();
+
+        return is_null($dataProvider)
+            ? []
+            : $dataProvider->getData();
     }
 }
