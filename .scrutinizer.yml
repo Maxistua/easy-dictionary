@@ -8,6 +8,9 @@ build:
       tests:
         override:
           - php-scrutinizer-run --enable-security-analysis
+          - command: vendor/bin/phpunit --coverage-clover=tests/coverage
             coverage:
-              file: tests/coverage.xml
-              format: clover
+              file: tests/coverage
+              format: php-clover
+tools:
+  php_code_coverage: true
