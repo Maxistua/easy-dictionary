@@ -50,7 +50,7 @@ class Manager
     {
         if (!isset($this->dictionaries[$name])) {
             $config = $this->getConfig();
-            if (!$config) {
+            if (is_null($config)) {
                 throw new RuntimeException(sprintf('Config not found', $name));
             }
 
