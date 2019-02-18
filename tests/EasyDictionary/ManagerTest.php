@@ -272,4 +272,31 @@ class ManagerTest extends TestCase
         $manager->setConfig($config);
         $manager->get('test');
     }
+
+    /**
+     * @covers \EasyDictionary\DataProvider\Simple
+     * @covers \EasyDictionary\AbstractDictionary
+     * @covers ::<public>
+     * @covers ::create
+     * @covers ::createDataProvider
+     * @expectedException \EasyDictionary\Exception\InvalidConfigurationException
+     * @expectedExceptionMessage Cache "no-cache" not found
+     */
+    public function testGetExceptionOfBadCache()
+    {
+        $config = $this->createMock(ConfigInterface::class);
+        $config->method('getDictionaryConfig')->willReturn([
+            'test' => [
+                'cache' => "no-cache",
+                'class' => SimpleDictionary::class,
+                'data' => [
+                    'class' => Simple::class,
+                ]
+            ]
+        ]);
+
+        $manager = new Manager();
+        $manager->setConfig($config);
+        $manager->get('test');
+    }
 }

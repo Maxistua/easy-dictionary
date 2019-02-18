@@ -87,7 +87,7 @@ class BasicConfigTest extends TestCase
     public function testAddGetCache()
     {
         /** @var CacheInterface $cache */
-        $cache = self::createMock(CacheInterface::class);
+        $cache = $this->createMock(CacheInterface::class);
 
         $config = new BasicConfig();
         $config->addCache($cache, 'testCache');

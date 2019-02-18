@@ -20,7 +20,7 @@ class Manager
     /**
      * @var ConfigInterface
      */
-    protected $config;
+    protected $config = null;
 
     /**
      * @var array
@@ -59,14 +59,14 @@ class Manager
                 throw new RuntimeException(sprintf('Dictionary with key "%s" not found', $name));
             }
 
-            $this->add($this->create($name, $dictionaryConfig));
+            $this->add($this->create($name, $dictionaryConfig, $config));
         }
 
         return $this->dictionaries[$name] ?? null;
     }
 
     /**
-     * @return ConfigInterface
+     * @return ConfigInterface|null
      */
     public function getConfig(): ?ConfigInterface
     {
@@ -105,15 +105,14 @@ class Manager
     }
 
     /**
-     * @param $name
-     * @param $dictionaryConfig
+     * @param string $name
+     * @param array $dictionaryConfig
+     * @param ConfigInterface $config
      * @return DictionaryInterface
      * @throws InvalidConfigurationException
      */
-    protected function create(string $name, array $dictionaryConfig): DictionaryInterface
+    protected function create(string $name, array $dictionaryConfig, ConfigInterface $config): DictionaryInterface
     {
-        $config = $this->getConfig();
-
         $dataProvider = $this->createDataProvider(
             $dictionaryConfig['data']['class'] ?? $config->getDefaultDataProviderClass(),
             $dictionaryConfig['data'] ?? []
@@ -129,8 +128,13 @@ class Manager
         $dictionary->setSearchFields($dictionaryConfig['searchFields'] ?? []);
 
         if (isset($dictionaryConfig['cache'])) {
+            $cache = $config->getCache($dictionaryConfig['cache']);
+            if (!$cache) {
+                throw new InvalidConfigurationException(sprintf('Cache "%s" not found', $dictionaryConfig['cache']));
+            }
+
             $dictionary->setCache(
-                $config->getCache($dictionaryConfig['cache']),
+                $cache,
                 $dictionaryConfig['cacheTTL'] ?? ConfigInterface::DEFAULT_CACHE_TTL
             );
         }
