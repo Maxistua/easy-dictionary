@@ -231,7 +231,7 @@ abstract class AbstractDictionary implements DictionaryInterface
      */
     public function offsetExists($offset)
     {
-        $data = $this->getData();
+        $data = $this->toArray();
 
         return isset($data[$offset]);
     }
@@ -250,17 +250,22 @@ abstract class AbstractDictionary implements DictionaryInterface
      */
     public function offsetGet($offset)
     {
-        $data = $this->getData();
+        $data = $this->toArray();
 
         return $data[$offset] ?? null;
     }
 
     /**
+     * @param callable|null $callable
      * @return array
      */
-    public function toArray()
+    public function toArray(callable $callable = null)
     {
-        return iterator_to_array($this->getIterator());
+        $iterator = is_callable($callable)
+            ? $this->withView($callable)
+            : $this->getIterator();
+
+        return iterator_to_array($iterator);
     }
 
     /**

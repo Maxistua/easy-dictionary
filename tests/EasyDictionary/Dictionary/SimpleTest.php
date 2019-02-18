@@ -315,6 +315,7 @@ class SimpleTest extends TestCase
      * @covers ::offsetGet
      * @covers ::offsetUnset
      * @covers ::offsetSet
+     * @covers ::toArray
      */
     public function testDataIteratorGetOneKey()
     {
@@ -350,6 +351,7 @@ class SimpleTest extends TestCase
      * @covers ::setDataProvider
      * @covers ::setName
      * @covers ::loadData
+     * @covers ::withView
      */
     public function testDataIteratorToArray()
     {
@@ -361,8 +363,13 @@ class SimpleTest extends TestCase
         $dictionary = new Simple('test');
         $dictionary->setDataProvider($dataProviderMock);
 
-        $array = $dictionary->toArray();
-        self::assertEquals($data, $array);
+        self::assertEquals($data, $dictionary->toArray());
+
+        self::assertEquals(['a' => 0, 'b' => 2, 'c' => 4], $dictionary->toArray(function ($data) {
+            foreach ($data as $key => $value) {
+                yield $key => $value * 2;
+            }
+        }));
     }
 
     /**
