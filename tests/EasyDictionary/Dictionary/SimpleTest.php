@@ -32,7 +32,7 @@ class SimpleTest extends TestCase
     public function testGetDataWithDataProvider()
     {
         $data = [0, 1, 2, 3];
-        $dataProviderMock = self::createMock(DataProviderInterface::class);
+        $dataProviderMock = $this->createMock(DataProviderInterface::class);
         $dataProviderMock->method('getData')->willReturn($data);
         $dataProviderMock->expects(self::once())->method('getData');
 
@@ -69,11 +69,11 @@ class SimpleTest extends TestCase
     public function testSaveDataToCache()
     {
         $data = [0, 1, 2, 3];
-        $dataProviderMock = self::createMock(DataProviderInterface::class);
+        $dataProviderMock = $this->createMock(DataProviderInterface::class);
         $dataProviderMock->method('getData')->willReturn($data);
         $dataProviderMock->expects(self::once())->method('getData');
 
-        $cacheMock = self::createMock(CacheInterface::class);
+        $cacheMock = $this->createMock(CacheInterface::class);
         $cacheMock->expects(self::once())->method('get');
         $cacheMock->expects(self::once())->method('set')->with(Simple::class . '_test', $data, 3600);
 
@@ -98,11 +98,11 @@ class SimpleTest extends TestCase
     public function testSaveDataToCacheThrowError()
     {
         $data = [0, 1, 2, 3];
-        $dataProviderMock = self::createMock(DataProviderInterface::class);
+        $dataProviderMock = $this->createMock(DataProviderInterface::class);
         $dataProviderMock->method('getData')->willReturn($data);
         $dataProviderMock->expects(self::once())->method('getData');
 
-        $cacheMock = self::createMock(CacheInterface::class);
+        $cacheMock = $this->createMock(CacheInterface::class);
         $cacheMock->expects(self::once())->method('get');
         $cacheMock->expects(self::once())->method('set')
             ->with(Simple::class . '_test', $data, 3600)
@@ -128,7 +128,7 @@ class SimpleTest extends TestCase
     public function testDataCount()
     {
         $data = [0, 1, 2, 3];
-        $dataProviderMock = self::createMock(DataProviderInterface::class);
+        $dataProviderMock = $this->createMock(DataProviderInterface::class);
         $dataProviderMock->method('getData')->willReturn($data);
         $dataProviderMock->expects(self::once())->method('getData');
 
@@ -153,7 +153,7 @@ class SimpleTest extends TestCase
     public function testDataIteratorWithoutView()
     {
         $data = ['a' => 0, 'b' => 1, 'c' => 2];
-        $dataProviderMock = self::createMock(DataProviderInterface::class);
+        $dataProviderMock = $this->createMock(DataProviderInterface::class);
         $dataProviderMock->method('getData')->willReturn($data);
         $dataProviderMock->expects(self::once())->method('getData');
 
@@ -184,7 +184,7 @@ class SimpleTest extends TestCase
     public function testDataIteratorWithGoodView()
     {
         $data = ['a' => 0, 'b' => 1, 'c' => 2];
-        $dataProviderMock = self::createMock(DataProviderInterface::class);
+        $dataProviderMock = $this->createMock(DataProviderInterface::class);
         $dataProviderMock->method('getData')->willReturn($data);
         $dataProviderMock->expects(self::once())->method('getData');
 
@@ -219,7 +219,7 @@ class SimpleTest extends TestCase
     public function testDataIteratorWithBadView()
     {
         $data = ['a' => 0, 'b' => 1, 'c' => 2];
-        $dataProviderMock = self::createMock(DataProviderInterface::class);
+        $dataProviderMock = $this->createMock(DataProviderInterface::class);
         $dataProviderMock->method('getData')->willReturn($data);
         $dataProviderMock->expects(self::once())->method('getData');
 
@@ -251,7 +251,7 @@ class SimpleTest extends TestCase
     public function testDataIteratorSearchInFlatData()
     {
         $data = ['a' => 0, 'b' => 1, 'c' => 2];
-        $dataProviderMock = self::createMock(DataProviderInterface::class);
+        $dataProviderMock = $this->createMock(DataProviderInterface::class);
         $dataProviderMock->method('getData')->willReturn($data);
         $dataProviderMock->expects(self::once())->method('getData');
 
@@ -284,7 +284,7 @@ class SimpleTest extends TestCase
     public function testDataIteratorSearchInArrayData()
     {
         $data = ['a' => ['code' => 33, 'code2' => 44], 'b' => ['code' => 44]];
-        $dataProviderMock = self::createMock(DataProviderInterface::class);
+        $dataProviderMock = $this->createMock(DataProviderInterface::class);
         $dataProviderMock->method('getData')->willReturn($data);
         $dataProviderMock->expects(self::once())->method('getData');
 
