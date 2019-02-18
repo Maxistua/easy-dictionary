@@ -297,6 +297,129 @@ class SimpleTest extends TestCase
 
         self::assertEquals(['b' => ['code' => 44]], $dictionary->search('/44/'));
     }
+
+    /**
+     * @covers ::__construct
+     * @covers ::setName
+     * @covers ::getCache
+     * @covers ::getData
+     * @covers ::getDataProvider
+     * @covers ::setDataProvider
+     * @covers ::getDefaultView
+     * @covers ::getIterator
+     * @covers ::loadData
+     * @covers ::setSearchFields
+     * @covers ::search
+     * @covers ::getSearchFields
+     * @covers ::offsetExists
+     * @covers ::offsetGet
+     * @covers ::offsetUnset
+     * @covers ::offsetSet
+     */
+    public function testDataIteratorGetOneKey()
+    {
+        $data = ['a' => 0, 'b' => 1, 'c' => 2];
+        $dataProviderMock = $this->createMock(DataProviderInterface::class);
+        $dataProviderMock->method('getData')->willReturn($data);
+        $dataProviderMock->expects(self::once())->method('getData');
+
+        $dictionary = new Simple('test');
+        $dictionary->setDataProvider($dataProviderMock);
+
+        self::assertEquals(false, isset($dictionary['empty']));
+        self::assertEquals(true, empty($dictionary['empty']));
+        self::assertEquals(0, $dictionary['a']);
+        self::assertEquals(1, $dictionary['b']);
+        self::assertEquals(2, $dictionary['c']);
+
+        unset($dictionary['c']);
+        self::assertEquals(2, $dictionary['c']);
+
+        $dictionary['c'] = 33;
+        self::assertEquals(2, $dictionary['c']);
+    }
+
+    /**
+     * @covers ::toArray
+     * @covers ::__construct
+     * @covers ::getCache
+     * @covers ::getData
+     * @covers ::getDataProvider
+     * @covers ::getDefaultView
+     * @covers ::getIterator
+     * @covers ::setDataProvider
+     * @covers ::setName
+     * @covers ::loadData
+     */
+    public function testDataIteratorToArray()
+    {
+        $data = ['a' => 0, 'b' => 1, 'c' => 2];
+        $dataProviderMock = $this->createMock(DataProviderInterface::class);
+        $dataProviderMock->method('getData')->willReturn($data);
+        $dataProviderMock->expects(self::once())->method('getData');
+
+        $dictionary = new Simple('test');
+        $dictionary->setDataProvider($dataProviderMock);
+
+        $array = $dictionary->toArray();
+        self::assertEquals($data, $array);
+    }
+
+    /**
+     * @covers ::toArray
+     * @covers ::__construct
+     * @covers ::getCache
+     * @covers ::getData
+     * @covers ::getDataProvider
+     * @covers ::getDefaultView
+     * @covers ::getIterator
+     * @covers ::setDataProvider
+     * @covers ::setName
+     * @covers ::loadData
+     */
+    public function testDataKeys()
+    {
+        $data = ['a' => 0, 'b' => 1, 'c' => 2];
+        $dataProviderMock = $this->createMock(DataProviderInterface::class);
+        $dataProviderMock->method('getData')->willReturn($data);
+        $dataProviderMock->expects(self::once())->method('getData');
+
+        $dictionary = new Simple('test');
+        $dictionary->setDataProvider($dataProviderMock);
+
+        $array = array_keys($dictionary->toArray());
+        self::assertEquals(['a', 'b', 'c'], $array);
+    }
+
+    /**
+     * @covers ::__construct
+     * @covers ::setName
+     * @covers ::getCache
+     * @covers ::getData
+     * @covers ::getDataProvider
+     * @covers ::setDataProvider
+     * @covers ::getDefaultView
+     * @covers ::getIterator
+     * @covers ::loadData
+     * @covers ::setSearchFields
+     * @covers ::search
+     * @covers ::getSearchFields
+     * @covers ::offsetGet
+     * @covers ::toArray
+     */
+    public function testDataValues()
+    {
+        $data = ['a' => 0, 'b' => 1, 'c' => 2];
+        $dataProviderMock = $this->createMock(DataProviderInterface::class);
+        $dataProviderMock->method('getData')->willReturn($data);
+        $dataProviderMock->expects(self::once())->method('getData');
+
+        $dictionary = new Simple('test');
+        $dictionary->setDataProvider($dataProviderMock);
+
+        $array = array_values($dictionary->toArray());
+        self::assertEquals([0, 1, 2], $array);
+    }
 }
 
 class InvalidArgException extends \Exception implements InvalidArgumentException

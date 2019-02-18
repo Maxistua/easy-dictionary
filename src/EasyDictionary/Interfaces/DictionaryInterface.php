@@ -9,7 +9,7 @@ use Psr\SimpleCache\CacheInterface;
  *
  * @package EasyDictionary
  */
-interface DictionaryInterface extends \IteratorAggregate, \Countable
+interface DictionaryInterface extends \IteratorAggregate, \Countable, \ArrayAccess
 {
     /**
      * @return string

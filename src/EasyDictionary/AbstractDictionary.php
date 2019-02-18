@@ -94,27 +94,11 @@ abstract class AbstractDictionary implements DictionaryInterface
     }
 
     /**
-     * @return \Iterator
+     * @return int
      */
-    public function getIterator(): iterable
+    public function count(): int
     {
-        $view = $this->getDefaultView();
-
-        if (is_null($view)) {
-            foreach ($this->getData() as $key => $item) {
-                yield $key => $item;
-            }
-        } else {
-            yield from $this->withView($view);
-        }
-    }
-
-    /**
-     * @return callable|null
-     */
-    public function getDefaultView(): ?callable
-    {
-        return $this->view;
+        return count($this->getData());
     }
 
     /**
@@ -189,27 +173,6 @@ abstract class AbstractDictionary implements DictionaryInterface
     }
 
     /**
-     * @param callable $callable
-     * @return \Generator
-     */
-    public function withView(callable $callable = null): iterable
-    {
-        if (is_callable($callable)) {
-            yield from call_user_func($callable, $this->getData());
-        } else {
-            yield from $this->getIterator();
-        }
-    }
-
-    /**
-     * @return int
-     */
-    public function count(): int
-    {
-        return count($this->getData());
-    }
-
-    /**
      * @param string $pattern
      * @param bool $strict
      * @return iterable
@@ -251,5 +214,89 @@ abstract class AbstractDictionary implements DictionaryInterface
         $this->searchFields = $searchFields;
 
         return $this;
+    }
+
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     * @return null|void
+     */
+    public function offsetSet($offset, $value)
+    {
+    }
+
+    /**
+     * @param mixed $offset
+     * @return bool
+     */
+    public function offsetExists($offset)
+    {
+        $data = $this->getData();
+
+        return isset($data[$offset]);
+    }
+
+    /**
+     * @param mixed $offset
+     * @return null|void
+     */
+    public function offsetUnset($offset)
+    {
+    }
+
+    /**
+     * @param mixed $offset
+     * @return mixed|null
+     */
+    public function offsetGet($offset)
+    {
+        $data = $this->getData();
+
+        return $data[$offset] ?? null;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return iterator_to_array($this->getIterator());
+    }
+
+    /**
+     * @return \Iterator
+     */
+    public function getIterator(): iterable
+    {
+        $view = $this->getDefaultView();
+
+        if (is_null($view)) {
+            foreach ($this->getData() as $key => $item) {
+                yield $key => $item;
+            }
+        } else {
+            yield from $this->withView($view);
+        }
+    }
+
+    /**
+     * @return callable|null
+     */
+    public function getDefaultView(): ?callable
+    {
+        return $this->view;
+    }
+
+    /**
+     * @param callable $callable
+     * @return \Generator
+     */
+    public function withView(callable $callable = null): iterable
+    {
+        if (is_callable($callable)) {
+            yield from call_user_func($callable, $this->getData());
+        } else {
+            yield from $this->getIterator();
+        }
     }
 }
