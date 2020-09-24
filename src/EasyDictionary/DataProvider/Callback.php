@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EasyDictionary\DataProvider;
 
+use EasyDictionary\DataProviderFilterInterface;
 use EasyDictionary\DataProviderInterface;
 
 /**
@@ -38,9 +39,10 @@ class Callback implements DataProviderInterface
     }
 
     /**
+     * @param DataProviderFilterInterface|null $filter
      * @return iterable
      */
-    public function getData():iterable
+    public function getData(DataProviderFilterInterface $filter = null): iterable
     {
         return is_callable($this->callback)
             ? call_user_func_array($this->callback, $this->arguments)

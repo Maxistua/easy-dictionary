@@ -79,7 +79,8 @@ class Manager
      *                  [data provider arguments]
      *              ],
      *              ["view" => function (...$data):\Generator {},]
-     *              ["searchFields" => [<string>, ...]]
+     *              ["searchFields" => [<string>, ...],]
+     *              ["dataProviderFilter" => EasyDictionary\DataProviderFilterInterface,]
      *          ],
      *
      *          ...
@@ -204,6 +205,16 @@ class Manager
             }
 
             $dictionary->setCache($cache, $dictionaryConfig['cacheTTL'] ?? 60);
+        }
+
+        if (isset($dictionaryConfig['dataProviderFilter'])) {
+            if (!($dictionaryConfig['dataProviderFilter'] instanceof DataProviderFilterInterface)) {
+                throw new InvalidConfigurationException(
+                    sprintf('Object with class "%s" does not support expected interface', get_class($dictionaryConfig['dataProviderFilter']))
+                );
+            }
+
+            $dictionary->setDataProviderFilter($dictionaryConfig['dataProviderFilter']);
         }
 
         return $dictionary;

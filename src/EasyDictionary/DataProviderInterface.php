@@ -9,7 +9,8 @@ namespace EasyDictionary;
 interface DataProviderInterface
 {
     /**
-     * @return mixed
+     * @param DataProviderFilterInterface|null $filter
+     * @return iterable
      */
-    public function getData():iterable;
+    public function getData(DataProviderFilterInterface $filter = null): iterable;
 }

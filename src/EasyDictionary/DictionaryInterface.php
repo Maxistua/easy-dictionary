@@ -4,9 +4,13 @@ namespace EasyDictionary;
 
 use Psr\SimpleCache\CacheInterface;
 
+/**
+ * Interface DictionaryInterface
+ * @package EasyDictionary
+ */
 interface DictionaryInterface extends \IteratorAggregate, \Countable
 {
-    const DATA_VALUE_TYPE_FLAT  = 'flat';
+    const DATA_VALUE_TYPE_FLAT = 'flat';
     const DATA_VALUE_TYPE_ARRAY = 'array';
 
     /**
@@ -23,6 +27,12 @@ interface DictionaryInterface extends \IteratorAggregate, \Countable
      * @param DataProviderInterface $provider
      */
     public function setDataProvider(DataProviderInterface $provider);
+
+    /**
+     * @param DataProviderFilterInterface $filter
+     * @return mixed
+     */
+    public function setDataProviderFilter(DataProviderFilterInterface $filter);
 
     /**
      * @return DataProviderInterface
@@ -57,5 +67,5 @@ interface DictionaryInterface extends \IteratorAggregate, \Countable
      * @param bool $strict
      * @return iterable
      */
-    public function search(string $pattern, bool $strict = false):iterable;
+    public function search(string $pattern, bool $strict = false): iterable;
 }

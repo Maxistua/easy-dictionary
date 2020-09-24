@@ -15,8 +15,8 @@ class Simple extends AbstractDictionary
     /**
      * @inheritdoc
      */
-    protected function loadData():iterable
+    protected function loadData(): iterable
     {
-        return $this->getDataProvider()->getData();
+        return $this->getDataProvider()->getData($this->dataProviderFilter);
     }
 }
