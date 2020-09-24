@@ -8,6 +8,7 @@ use EasyDictionary\AbstractDictionary;
 
 /**
  * Class Simple
+ *
  * @package EasyDictionary\Dictionary
  */
 class Simple extends AbstractDictionary
@@ -17,6 +18,10 @@ class Simple extends AbstractDictionary
      */
     protected function loadData(): iterable
     {
-        return $this->getDataProvider()->getData($this->dataProviderFilter);
+        $dataProvider = $this->getDataProvider();
+
+        return is_null($dataProvider)
+            ? []
+            : $dataProvider->getData($this->dataProviderFilter);
     }
 }

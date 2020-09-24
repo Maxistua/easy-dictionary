@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace EasyDictionary;
 
+use EasyDictionary\Interfaces\DataProviderInterface;
+use EasyDictionary\Interfaces\DictionaryInterface;
+use EasyDictionary\Interfaces\DataProviderFilterInterface;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -53,11 +56,6 @@ abstract class AbstractDictionary implements DictionaryInterface
     protected $searchFields = [];
 
     /**
-     * @var string
-     */
-    protected $dataValueType = self::DATA_VALUE_TYPE_FLAT;
-
-    /**
      * @var bool
      */
     protected $dataLoaded = false;
@@ -83,28 +81,9 @@ abstract class AbstractDictionary implements DictionaryInterface
     }
 
     /**
-     * @return string
+     * @return null|DataProviderInterface
      */
-    public function getDataValueType(): string
-    {
-        return $this->dataValueType;
-    }
-
-    /**
-     * @param string $dataValueType
-     * @return $this
-     */
-    public function setDataValueType(string $dataValueType)
-    {
-        $this->dataValueType = $dataValueType;
-
-        return $this;
-    }
-
-    /**
-     * @return DataProviderInterface
-     */
-    public function getDataProvider(): DataProviderInterface
+    public function getDataProvider(): ?DataProviderInterface
     {
         return $this->dataProvider;
     }
@@ -124,36 +103,19 @@ abstract class AbstractDictionary implements DictionaryInterface
      * @param DataProviderFilterInterface $filter
      * @return $this|mixed
      */
-    public function setDataProviderFilter(DataProviderFilterInterface $filter)
+    public function setDataProviderFilter(DataProviderFilterInterface $filter = null)
     {
         $this->dataProviderFilter = $filter;
 
         return $this;
     }
 
-    /**`
-     * @param null $filter
-     * @return iterable
-     */
-    public function getIterator(): iterable
-    {
-        $view = $this->getDefaultView();
-
-        if (is_null($view)) {
-            foreach ($this->getData() as $key => $item) {
-                yield $key => $item;
-            }
-        } else {
-            yield from $this->withView($view, $filter);
-        }
-    }
-
     /**
-     * @return callable|null
+     * @return int
      */
-    public function getDefaultView(): ?callable
+    public function count(): int
     {
-        return $this->view;
+        return count($this->getData());
     }
 
     /**
@@ -225,36 +187,10 @@ abstract class AbstractDictionary implements DictionaryInterface
 
     /**
      * @param string $name
-     * @return self
      */
     public function setName(string $name)
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @param callable|null $callable
-     * @param null $filter
-     * @return iterable
-     */
-    public function withView(callable $callable = null, $filter = null): iterable
-    {
-        if (is_callable($callable)) {
-            yield from call_user_func($callable, $this->getData($filter));
-        } else {
-            yield from $this->getIterator();
-        }
-    }
-
-    /**
-     * @param null $filter
-     * @return int
-     */
-    public function count($filter = null): int
-    {
-        return count($this->getData($filter));
     }
 
     /**
@@ -264,18 +200,9 @@ abstract class AbstractDictionary implements DictionaryInterface
      */
     public function search(string $pattern, bool $strict = false): iterable
     {
-        if (self::DATA_VALUE_TYPE_FLAT === $this->dataValueType) {
-            $data = [];
-            foreach ($this as $key => $value) {
-                $data[$key] = (string)$key . ' ' . (string)$value;
-            }
-
-            return preg_grep($pattern, $data);
-        }
-
         $data = [];
         $searchData = [];
-        $searchFields = $this->getSearchFields($strict);
+        $searchFields = array_filter($this->getSearchFields($strict));
         foreach ($this as $key => $value) {
             $data[$key] = $value;
 
@@ -308,5 +235,94 @@ abstract class AbstractDictionary implements DictionaryInterface
         $this->searchFields = $searchFields;
 
         return $this;
+    }
+
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     * @return null|void
+     */
+    public function offsetSet($offset, $value)
+    {
+    }
+
+    /**
+     * @param mixed $offset
+     * @return bool
+     */
+    public function offsetExists($offset)
+    {
+        $data = $this->toArray();
+
+        return isset($data[$offset]);
+    }
+
+    /**
+     * @param mixed $offset
+     * @return null|void
+     */
+    public function offsetUnset($offset)
+    {
+    }
+
+    /**
+     * @param mixed $offset
+     * @return mixed|null
+     */
+    public function offsetGet($offset)
+    {
+        $data = $this->toArray();
+
+        return $data[$offset] ?? null;
+    }
+
+    /**
+     * @param callable|null $callable
+     * @return array
+     */
+    public function toArray(callable $callable = null)
+    {
+        $iterator = is_callable($callable)
+            ? $this->withView($callable)
+            : $this->getIterator();
+
+        return iterator_to_array($iterator);
+    }
+
+    /**
+     * @return \Iterator
+     */
+    public function getIterator(): iterable
+    {
+        $view = $this->getDefaultView();
+
+        if (is_null($view)) {
+            foreach ($this->getData() as $key => $item) {
+                yield $key => $item;
+            }
+        } else {
+            yield from $this->withView($view);
+        }
+    }
+
+    /**
+     * @return callable|null
+     */
+    public function getDefaultView(): ?callable
+    {
+        return $this->view;
+    }
+
+    /**
+     * @param callable $callable
+     * @return \Generator
+     */
+    public function withView(callable $callable = null): iterable
+    {
+        if (is_callable($callable)) {
+            yield from call_user_func($callable, $this->getData());
+        } else {
+            yield from $this->getIterator();
+        }
     }
 }

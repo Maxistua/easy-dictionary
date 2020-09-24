@@ -1,6 +1,6 @@
 <?php
 
-namespace EasyDictionary;
+namespace EasyDictionary\Interfaces;
 
 /**
  * Interface DataProviderFilterInterface
